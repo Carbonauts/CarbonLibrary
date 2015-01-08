@@ -15,28 +15,22 @@ import edu.wpi.first.wpilibj.Joystick;
  * needs to perform based on Operator input may be defined by it's name, and
  * then the resource which controls it may be separately manipulated.
  * 
- * For example, for driving, typically Joystick Axes are used for either a Tank
- * Drive or Arcade Drive.  To assign controls for each, you would define methods
- * such as "getArcadeXAxis()" and "getArcadeYAxis()".  These methods would
- * return the raw joystick value of the axis which was assigned to each of those
- * actions, regardless of which physical thumb-stick was assigned.  These
- * assignments are also dynamic, and they may be changed at any time.
+ * Controls can be added to the Carbon User Interface (UI) by calling
+ * addControl().  Specify the name, type, port, and ID of the control, then
+ * retrieve the data later by using the name as a key in the getButtonData()
+ * or getAxisData() methods.  Note, if a Control's type is specified as, say,
+ * a ControlType.BUTTON, then the data for that will only be retrieveable using
+ * the getButtonData() method, and vice versa for ControlType.AXIS and 
+ * getAxisData().
  * 
- * The way to assign controller resources to an action is to create a PORT
- * variable and an ID variable for the action inside the UIConfig class (which
- * is a sub-class inside of CarbonUI).  These PORT and ID variables for the
- * action need encapsulation (getters and setters).  Then, a method is needed
- * in CarbonUI which has a return type which is the same as the value being 
- * retrieved from the USB controller.  The name of the method should reflect the
- * action which is using the resource.  Note: If more than one action all refer
- * to the same USB controller resource, they should both have unique action
- * methods in CarbonUI and unique ID and PORT variables in the UIConfig.  This
- * way, a chance in the resource for one action will not unintentionally remap
- * the resources for another action.
+ * Different instances of CarbonUI may be instantiated and stored to allow
+ * different control configurations to be accessed.  This can be useful to assign
+ * different controller mappings 
+ * 
  * @author Nick Mosher, Team 1829 Carbonauts Captain
  */
-public class CarbonUI {
-	
+public class CarbonUI 
+{	
 	public enum ControlType {
 		AXIS,
 		BUTTON
@@ -73,25 +67,64 @@ public class CarbonUI {
      * @param name The name of the control object.
      * @param port The USB port the control object is on.
      * @param id The ID of the control object.
+     * @return true if the control was added successfully, false
+     * if a control by the same name already exists or if another
+     * control references the exact port and id already.
      */
-    public void addControl(String name, ControlType type, int port, int id)
+    public boolean addControl(String name, ControlType type, int port, int id)
     {
     	for(Control c : controls)
     	{
     		if(c.getName().equalsIgnoreCase(name))
     		{
     			System.out.println("Control " + name + " already exists.");
-    			return;
+    			return false;
+    		}
+    		
+    		if(c.getPort() == port && c.getID() == id)
+    		{
+    			System.out.println("A control already exists with port " + port +
+    					"and ID " + id + ".");
+    			return false;
     		}
     	}
     	controls.add(new Control(name, type, port, id));
+    	return true;
+    }
+    
+    /**
+     * Adds a control object to the CarbonUI.
+     * @param control The control to add to this CarbonUI.
+     * @return true if the control was added successfully, false
+     * if a control by the same name already exists or if another
+     * control references the exact port and id already.
+     */
+    public boolean addControl(Control control)
+    {
+    	for(Control c : controls)
+    	{
+    		if(c.getName().equalsIgnoreCase(control.getName()))
+    		{
+    			System.out.println("Control " + control.getName() + " already exists.");
+    			return false;
+    		}
+    		
+    		if(c.getPort() == control.getPort() && c.getID() == control.getID())
+    		{
+    			System.out.println("A control already exists with port " + control.getPort() + 
+    					"and ID " + control.getID() + ".");
+    			return false;
+    		}
+    	}
+    	controls.add(control);
+    	return true;
     }
     
     /**
      * Removes a control from the CarbonUI.
      * @param name The name of the control to remove.
-     * @return True if the process completed successfully, i.e. a control with the
-     * name 'name' was found and removed.  False if no matching control was found
+     * @return true if the process completed successfully, i.e. a control with the
+     * name 'name' was found and removed.  false if no matching control was found
      * and removed.
      */
     public boolean removeControl(String name)
