@@ -9,54 +9,82 @@ import edu.wpi.first.wpilibj.Solenoid;
 /**
  * Carbonaut's own Solenoid object, with added constructors to invert 'get()'
  * and 'set()'
- * @author Nick
+ * @author Nick Mosher, Team 1829 Carbonauts Captain
  */
-public class CarbonSolenoid extends Solenoid {
+public class CarbonSolenoid extends Solenoid 
+{    
+    private boolean inverted = false;
     
-    private boolean mInverted = false;
-    
-    public CarbonSolenoid(int channel) {
+    /**
+     * Creates a CarbonSolenoid identical to Solenoid.
+     * @param channel The PWM channel of this CarbonSolenoid.
+     */
+    public CarbonSolenoid(int channel) 
+    {
         super(channel);
     }
     
-    public CarbonSolenoid(int moduleNumber, int channel) {
+    /**
+     * Creates a CarbonSolenoid identical to Solenoid.
+     * @param moduleNumber The solenoid module of this CarbonSolenoid.
+     * @param channel The PWM channel of this CarbonSolenoid.
+     */
+    public CarbonSolenoid(int moduleNumber, int channel) 
+    {
         super(moduleNumber, channel);
     }
     
-    public CarbonSolenoid(int channel, boolean inverted) {
+    /**
+     * Creates a CarbonSolenoid that acts like a Solenoid, but
+     * may be inverted based on the 'inverted' parameter.
+     * @param channel The PWM channel of this CarbonSolenoid.
+     * @param inverted Whether this solenoid is inverted.
+     */
+    public CarbonSolenoid(int channel, boolean inverted) 
+    {
         super(channel);
-        mInverted = inverted;
+        this.inverted = inverted;
     }
     
-    public CarbonSolenoid(int moduleNumber, int channel, boolean inverted) {
+    /**
+     * Creates a CarbonSolenoid that acts like a Solenoid, but
+     * may be inverted based on the 'inverted' parameter.
+     * @param moduleNumber The Solenoid module of this CarbonSolenoid.
+     * @param channel The PWM channel of this CarbonSolenoid.
+     * @param inverted Whether this solenoid is inverted.
+     */
+    public CarbonSolenoid(int moduleNumber, int channel, boolean inverted) 
+    {
         super(moduleNumber, channel);
-        mInverted = inverted;
+        this.inverted = inverted;
     }
     
-    public void set(boolean on) {
-        if(mInverted) {
-            super.set(!on);
-        } else {
-            super.set(on);
-        }
+    /**
+     * Overrides Solenoid's set(), but passes the opposite value
+     * if this CarbonSolenoid is inverted.
+     */
+    public void set(boolean on) 
+    {
+    	super.set(inverted ? !on : on);
     }
     
-    public boolean get() {
-        if(mInverted) {
-            return !super.get();
-        }
-        return super.get();
+    public boolean get() 
+    {
+    	return inverted ? !super.get() : super.get();
     }   
     
-    public void toggleInverted() {
-        mInverted = !mInverted;
+    public void toggleInverted() 
+    {
+        inverted = !inverted;
     }
     
-    public void setIverted(boolean inverted) {
-        mInverted = inverted;
+    public void setIverted(boolean inverted) 
+    {
+        this.inverted = inverted;
     }
     
-    public boolean getInverted() {
-        return mInverted;
+    public boolean getInverted() 
+    {
+        return inverted;
     }
 }

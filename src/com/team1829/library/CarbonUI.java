@@ -42,13 +42,15 @@ public class CarbonUI {
 		BUTTON
 	}
 	
-    /**
-     * A static reference to THIS class.  This class uses the "Singleton"
-     * pattern of instantiation, where only one static object is created and it
-     * is stored by the class itself as a static reference (in this case, 'ui').
-     * All references to this object are obtained through 'getUI()'.
-     */
-    private static CarbonUI ui;
+	/**
+	 * The default return value for a button that does not exist.
+	 */
+	public static final boolean BUTTON_NULL = false;
+	
+	/**
+	 * The default return value for an axis that does not exist.
+	 */
+	public static final double AXIS_NULL = 0.0;
     
     /**
      * Dynamic list that will keep track of all UIElements that are added to the
@@ -57,24 +59,13 @@ public class CarbonUI {
     private List<Control> controls;
     
     /**
-     * A private constructor which is called by the 'getUI()' method if an
-     * instance of 'ui' does not already exist.
+     * Creates a new CarbonUI object.  Each CarbonUI can have different configurations,
+     * so different users could instantiate their own CarbonUI's and add their own
+     * control preferences into them.
      */
-    private CarbonUI() {
+    public CarbonUI() 
+    {
         controls = new ArrayList<Control>();
-    }
-    
-    /**
-     * Creates an instance of THIS class and stores it in a static reference
-     * unless the static reference already exists.  If this is the case, then
-     * this method returns the existing static reference. (Singleton pattern)
-     * @return The static reference to THIS class.
-     */
-    public static CarbonUI getUI() {
-        if(ui == null) {
-            ui = new CarbonUI();
-        }
-        return ui;
     }
     
     /**
@@ -116,16 +107,6 @@ public class CarbonUI {
     	return false;
     }
     
-    public void setControlList(List<Control> controls)
-    {
-    	this.controls = controls;
-    }
-    
-    public List<Control> getControlList()
-    {
-    	return controls;
-    }
-    
     /**
      * Gets the data from a button control object based on its name.
      * @param name The name of the button.
@@ -147,7 +128,7 @@ public class CarbonUI {
     			}
     		}
     	}
-    	return false;
+    	return BUTTON_NULL;
     }
     
     /**
@@ -171,6 +152,6 @@ public class CarbonUI {
     			}
     		}
     	}
-    	return 0.0;
+    	return AXIS_NULL;
     }
 }

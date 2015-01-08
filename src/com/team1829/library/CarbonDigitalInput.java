@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * of the 'get' method by overriding it.  
  * @author Nick
  */
-public class CarbonDigitalInput extends DigitalInput {
+public class CarbonDigitalInput extends DigitalInput 
+{
     
 	/**
 	 * Object property that specifies whether this CarbonDigitalInput is
@@ -24,7 +25,8 @@ public class CarbonDigitalInput extends DigitalInput {
      * defaulting to NO inversion.
      * @param channel The DIO channel that this digital input is on.
      */
-    public CarbonDigitalInput(int channel) {
+    public CarbonDigitalInput(int channel) 
+    {
         super(channel);
     }
     
@@ -35,7 +37,8 @@ public class CarbonDigitalInput extends DigitalInput {
      * @param channel The DIO channel that this digital input is on.
      * @param inv True to invert the reading of this input, false to stay the same.
      */
-    public CarbonDigitalInput(int channel, boolean inv) {
+    public CarbonDigitalInput(int channel, boolean inv) 
+    {
         super(channel);
         this.inverted = inv;
     }
@@ -44,8 +47,10 @@ public class CarbonDigitalInput extends DigitalInput {
      * Overrides DigitalInput's 'get()' method and simply applies an inversion
      * based on object properties set in the constructor or mutator methods.
      */
-    public boolean get() {
-        if(inverted) {
+    public boolean get() 
+    {
+        if(inverted) 
+        {
             return !super.get();
         }
         return super.get();
