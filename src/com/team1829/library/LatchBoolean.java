@@ -10,14 +10,14 @@ package com.team1829.library;
  * Inspired by Team 254's FRC-2013 code.
  * @author Nick Mosher, Team 1829 Carbonauts Captain
  */
-public class Latch 
+public class LatchBoolean 
 {
     private boolean lastBool;
     
     /**
      * Constructs a new latch.
      */
-    public Latch() 
+    public LatchBoolean() 
     {
         lastBool = true;
     }
