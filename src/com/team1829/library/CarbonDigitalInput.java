@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
  */
 public class CarbonDigitalInput extends DigitalInput 
 {
-    
 	/**
 	 * Object property that specifies whether this CarbonDigitalInput is
 	 * inverted or not.
@@ -35,12 +34,12 @@ public class CarbonDigitalInput extends DigitalInput
      * parameter.  An inverted CarbonDigitalInput will return the opposite
      * reading when calling 'get()' than a DigitalInput.
      * @param channel The DIO channel that this digital input is on.
-     * @param inv True to invert the reading of this input, false to stay the same.
+     * @param inverted True to invert the reading of this input, false to stay the same.
      */
-    public CarbonDigitalInput(int channel, boolean inv) 
+    public CarbonDigitalInput(int channel, boolean inverted) 
     {
         super(channel);
-        this.inverted = inv;
+        this.inverted = inverted;
     }
     
     /**
@@ -49,20 +48,25 @@ public class CarbonDigitalInput extends DigitalInput
      */
     public boolean get() 
     {
-        if(inverted) 
-        {
-            return !super.get();
-        }
-        return super.get();
+    	return this.inverted ? !super.get() : super.get();
     }
     
     /**
-     * Sets the inversion property of this CarbonDigitalInput to 'inv'.
-     * @param inv True to invert the reading of this input, false otherwise.
+     * Sets the inversion property of this CarbonDigitalInput.
+     * @param inverted True to invert the reading of this input, false otherwise.
      */
-    public void setInverted(boolean inv)
+    public void setInverted(boolean inverted)
     {
-    	inverted = inv;
+    	this.inverted = inverted;
+    }
+    
+    /**
+     * Returns whether this object currently inverts values.
+     * @return Whether this object currently inverts values.
+     */
+    public boolean getInverted()
+    {
+    	return this.inverted;
     }
     
     /**
@@ -70,6 +74,6 @@ public class CarbonDigitalInput extends DigitalInput
      */
     public void toggleInverted()
     {
-    	inverted = !inverted;
+    	this.inverted = !this.inverted;
     }
 }
