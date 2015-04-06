@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.Joystick;
  * addControl().  Specify the name, type, port, and ID of the control, then
  * retrieve the data later by using the name as a key in the getButtonData()
  * or getAxisData() methods.  Note, if a Control's type is specified as, say,
- * a ControlType.BUTTON, then the data for that will only be retrieveable using
+ * a ControlType.BUTTON, then the data for that will only be retrievable using
  * the getButtonData() method, and vice versa for ControlType.AXIS and 
  * getAxisData().
  * 
@@ -30,10 +30,11 @@ import edu.wpi.first.wpilibj.Joystick;
  * @author Nick Mosher, Team 1829 Carbonauts Captain
  */
 public class CarbonUI 
-{	
-	public enum ControlType {
-		AXIS,
-		BUTTON
+{
+	public enum ControlType
+	{
+		Axis,
+		Button
 	}
 	
 	/**
@@ -73,22 +74,15 @@ public class CarbonUI
      */
     public boolean addControl(String name, ControlType type, int port, int id)
     {
+    	Control control = new Control(name, type, port, id);
     	for(Control c : controls)
     	{
-    		if(c.getName().equalsIgnoreCase(name))
+    		if(c.equals(control))
     		{
-    			System.out.println("Control " + name + " already exists.");
-    			return false;
-    		}
-    		
-    		if(c.getPort() == port && c.getID() == id)
-    		{
-    			System.out.println("A control already exists with port " + port +
-    					"and ID " + id + ".");
     			return false;
     		}
     	}
-    	controls.add(new Control(name, type, port, id));
+    	controls.add(control);
     	return true;
     }
     
@@ -103,16 +97,8 @@ public class CarbonUI
     {
     	for(Control c : controls)
     	{
-    		if(c.getName().equalsIgnoreCase(control.getName()))
+    		if(control.equals(c))
     		{
-    			System.out.println("Control " + control.getName() + " already exists.");
-    			return false;
-    		}
-    		
-    		if(c.getPort() == control.getPort() && c.getID() == control.getID())
-    		{
-    			System.out.println("A control already exists with port " + control.getPort() + 
-    					"and ID " + control.getID() + ".");
     			return false;
     		}
     	}
@@ -145,15 +131,53 @@ public class CarbonUI
      * @param name The name of the button.
      * @return The button's status.
      */
-    public boolean getButtonData(String name)
+    public boolean getButtonState(String name)
     {
     	for(Control c : controls)
     	{
     		if(c.getName().equalsIgnoreCase(name))
     		{
-    			if(c.getControlType() == ControlType.BUTTON)
+    			if(c.getType() == ControlType.Button)
     			{
     				return new Joystick(c.getPort()).getRawButton(c.getID());
+    			}
+    			else
+    			{
+    				System.out.println(name + " exists, but is not a Button control!");
+    			}
+    		}
+    	}
+    	return BUTTON_NULL;
+    }
+    
+    public boolean getButtonPress(String name)
+    {
+    	for(Control c : controls)
+    	{
+    		if(c.getName().equalsIgnoreCase(name))
+    		{
+    			if(c.getType() == ControlType.Button)
+    			{
+    				return c.getLatch().onTrue(new Joystick(c.getPort()).getRawButton(c.getID()));
+    			}
+    			else
+    			{
+    				System.out.println(name + " exists, but is not a Button control!");
+    			}
+    		}
+    	}
+    	return BUTTON_NULL;
+    }
+    
+    public boolean getButtonRelease(String name)
+    {
+    	for(Control c : controls)
+    	{
+    		if(c.getName().equalsIgnoreCase(name))
+    		{
+    			if(c.getType() == ControlType.Button)
+    			{
+    				return c.getLatch().onFalse(new Joystick(c.getPort()).getRawButton(c.getID()));
     			}
     			else
     			{
@@ -175,7 +199,7 @@ public class CarbonUI
     	{
     		if(c.getName().equalsIgnoreCase(name))
     		{
-    			if(c.getControlType() == ControlType.AXIS)
+    			if(c.getType() == ControlType.Axis)
     			{
     				return new Joystick(c.getPort()).getRawAxis(c.getID());
     			}
@@ -186,5 +210,144 @@ public class CarbonUI
     		}
     	}
     	return AXIS_NULL;
+    }
+    
+    /**
+     * A Control represents a source of data from a controller.
+     * Each Control has a USB port which identifies which controller 
+     * the control data originates from, and a controller ID which tells
+     * which specific button, thumbstick, slider, or other physical 
+     * input from that controller in question.
+     * @author Nick Mosher, Team 1829 Carbonauts Captain
+     */
+    public class Control 
+    {
+    	private String name;
+    	private ControlType type;
+    	private LatchBoolean buttonLatch;
+        private int port;
+        private int id;
+        
+        /**
+         * @param port The USB port of the controller that this piece of
+         * control data is originating from.
+         * @param ID The ID of the physical input on the controller that
+         * this piece of data is originating from.
+         */
+        public Control(String name, ControlType type, int port, int id) 
+        {
+        	this.name = name;
+        	this.type = type;
+        	this.buttonLatch = new LatchBoolean();
+            this.port = port;
+            this.id = id;
+        }
+        
+        /**
+         * Sets the USB port and the ID of this control.
+         * @param port The USB port of this control.
+         * @param ID The ID of this control.
+         */
+        public void setData(ControlType type, int port, int id) 
+        {
+        	this.type = type;
+            this.port = port;
+            this.id = id;
+        }
+
+        /**
+         * @return The Name of this control.
+         */
+        public String getName()
+        {
+        	return name;
+        }
+        
+        /**
+         * @param name The Name of this control.
+         */
+        public void setName(String name)
+        {
+        	this.name = name;
+        }
+        
+        /**
+         * @return The USB port of the control this object
+         * represents.
+         */
+        public int getPort() 
+        {
+            return port;
+        }
+
+        /**
+         * @param port The new USB port to which this control is
+         * assigned.
+         */
+        public void setPort(int port) 
+        {
+            this.port = port;
+        }
+
+        /**
+         * @return The ID of the control this object represents.
+         */
+        public int getID() 
+        {
+            return id;
+        }
+
+        /**
+         * @param ID The new ID of this control.
+         */
+        public void setID(int id) 
+        {
+            this.id = id;
+        }
+        
+        /**
+         * @return The ControlType of this control.  Either BUTTON or AXIS.
+         */
+        public ControlType getType()
+        {
+        	return this.type;
+        }
+        
+        /**
+         * @param type The new ControlType of this control.  Either BUTTON or AXIS.
+         */
+        public void setControlType(ControlType type)
+        {
+        	this.type = type;
+        }
+        
+        public LatchBoolean getLatch()
+        {
+        	return this.buttonLatch;
+        }
+        
+        public boolean equals(Object o)
+        {
+        	if(Control.this == o)
+        	{
+        		return true;
+        	}
+        	
+        	if(!(o instanceof Control))
+        	{
+        		return false;
+        	}
+        	
+        	//Since o must be a control, cast it for more comparisons.
+        	Control control = (Control) o;
+        	
+        	if(control.getName().equals(Control.this.getName()) &&
+        			control.getPort() == Control.this.getPort() &&
+        			control.getType() == Control.this.getType())
+        	{
+        		return true;
+        	}
+        	return false;
+        }
     }
 }
